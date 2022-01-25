@@ -9,6 +9,12 @@ or, if you have already cloned it, get submodules contents :
 git submodule init; git submodule update
 ```
 
+## Build the docker image
+
+```bash
+docker build -t dorowu/ubuntu-desktop-lxde-vnc -f Dockerfile.amd64 .
+```
+
 # Test local code
 
 ## Test-run in container rebuilt from local repo
