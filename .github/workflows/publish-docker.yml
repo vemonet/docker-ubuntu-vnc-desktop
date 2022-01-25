@@ -35,7 +35,7 @@ jobs:
           file: Dockerfile.amd64
           pull: true
           push: true
-          tags: ${{ steps.docker_meta.outputs.tags }}
+          tags: latest
           labels: ${{ steps.docker_meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

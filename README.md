@@ -7,7 +7,7 @@ docker-ubuntu-vnc-desktop is a Docker image to provide web VNC interface to acce
 
 To make changes to the code checkout the [DEVELOPMENT.md](/blob/develop/DEVELOPMENT.md) page.
 
-## About the fork
+### About this fork
 
 [![Publish Docker image](https://github.com/vemonet/docker-ubuntu-vnc-desktop/actions/workflows/publish-docker.yml/badge.svg)](https://github.com/vemonet/docker-ubuntu-vnc-desktop/actions/workflows/publish-docker.yml)
 
@@ -17,6 +17,8 @@ It brings those changes:
 
 * Fixes a logout/login issue when using docker-ubuntu-vnc-desktop in a Kubernetes environment
 * Add a GitHub Action workflow to publish a new image at each push in `.github/workflows/publish-docker.yml`
+
+## Table of content
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=2 orderedList=false} -->
 
