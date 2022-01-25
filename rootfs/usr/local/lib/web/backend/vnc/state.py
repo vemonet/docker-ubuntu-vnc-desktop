@@ -6,6 +6,8 @@ from gevent.event import Event
 from gevent import subprocess as gsp
 from re import search as research
 from .log import log
+import re
+from time import sleep
 
 
 class State(object):
@@ -28,6 +30,7 @@ class State(object):
 
     def _update_health(self):
         health = True
+        output = None
         try:
             output = gsp.check_output([
                 'supervisorctl', '-c', '/etc/supervisor/supervisord.conf',
@@ -37,10 +40,21 @@ class State(object):
                 if not line.startswith('web') and line.find('RUNNING') < 0:
                     health = False
                     break
-        except Exception as e:
+        except gsp.CalledProcessError as e:
             # cf. https://github.com/fcwu/docker-ubuntu-vnc-desktop/issues/271
-            log.warning('Error getting the supervisor status, asserting its RUNNING')
-            log.warning(e)
+            # When logout, supervisorctl returns "x:wm  EXITED"
+            output = e.output
+            log.warning(e.output)
+            # Restart x:wm
+            # if re.compile("^.*x:wm(\s+)EXITED.*$").match(output):
+            if 'x:wm                             EXITED' in output:
+                log.warning('Restarting x:wm')
+                restart_wm = gsp.check_output([
+                    'supervisorctl', '-c', '/etc/supervisor/supervisord.conf',
+                    'restart', 'x:wm'
+                ], encoding='UTF-8')
+                sleep(2)
+                return self._update_health()
         if self._health != health:
             self._health = health
             self.notify()
