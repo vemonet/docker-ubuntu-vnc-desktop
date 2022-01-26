@@ -41,15 +41,10 @@ class State(object):
                     health = False
                     break
         except gsp.CalledProcessError as e:
-            # cf. https://github.com/fcwu/docker-ubuntu-vnc-desktop/issues/271
-            # When logout, supervisorctl returns "x:wm  EXITED"
-            output = e.output
-            log.warning(e.output)
-            # Restart x:wm
-            # if re.compile("^.*x:wm(\s+)EXITED.*$").match(output):
-            if 'x:wm                             EXITED' in output:
+            # Restart x:wm if status EXITED, cf. https://github.com/fcwu/docker-ubuntu-vnc-desktop/issues/271
+            if re.compile(".*x:wm(\s+)EXITED.*").search(e.output):
                 log.warning('Restarting x:wm')
-                restart_wm = gsp.check_output([
+                gsp.check_output([
                     'supervisorctl', '-c', '/etc/supervisor/supervisord.conf',
                     'restart', 'x:wm'
                 ], encoding='UTF-8')
