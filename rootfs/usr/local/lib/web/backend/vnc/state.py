@@ -53,7 +53,7 @@ class State(object):
                     'supervisorctl', '-c', '/etc/supervisor/supervisord.conf',
                     'restart', 'x:wm'
                 ], encoding='UTF-8')
-                sleep(2)
+                sleep(3)
                 return self._update_health()
         if self._health != health:
             self._health = health
