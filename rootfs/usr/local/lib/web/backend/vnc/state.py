@@ -30,7 +30,6 @@ class State(object):
 
     def _update_health(self):
         health = True
-        output = None
         try:
             output = gsp.check_output([
                 'supervisorctl', '-c', '/etc/supervisor/supervisord.conf',
@@ -41,9 +40,9 @@ class State(object):
                     health = False
                     break
         except gsp.CalledProcessError as e:
-            # Restart x:wm if status EXITED, cf. https://github.com/fcwu/docker-ubuntu-vnc-desktop/issues/271
+            # Restart x:wm if its status is EXITED, cf. https://github.com/fcwu/docker-ubuntu-vnc-desktop/issues/271
             if re.compile(".*x:wm(\s+)EXITED.*").search(e.output):
-                log.warning('Restarting x:wm')
+                log.warning('Process x:wm status is EXITED, restarting it.')
                 gsp.check_output([
                     'supervisorctl', '-c', '/etc/supervisor/supervisord.conf',
                     'restart', 'x:wm'
