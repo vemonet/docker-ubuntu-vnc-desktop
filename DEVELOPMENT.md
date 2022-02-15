@@ -11,8 +11,18 @@ git submodule init; git submodule update
 
 ## Build the docker image
 
+### Generic Ubuntu desktop
+
 ```bash
-docker build -t dorowu/ubuntu-desktop-lxde-vnc -f Dockerfile.amd64 .
+docker build -t dorowu/ubuntu-desktop-lxde-vnc --build-arg BASE_IMAGE=ubuntu:20.04 -f Dockerfile.amd64 .
+```
+
+### Ubuntu for biomedical image analysis
+
+With FreeSurfer and img_pipe installed:
+
+```bash
+docker build -t ghcr.io/vemonet/docker-ubuntu-vnc-desktop:img_pipe -f images/Dockerfile.img_pipe .
 ```
 
 # Test local code

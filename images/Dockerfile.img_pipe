@@ -1,0 +1,54 @@
+FROM ghcr.io/vemonet/docker-ubuntu-vnc-desktop:latest
+
+# Install FreeSurfer and img_pipe for image analysis
+
+WORKDIR /opt
+
+RUN apt-get update && \
+    apt-get -y install gcc g++ perl \
+        libXt* libgl1-mesa-glx libglu1-mesa libsm6 \
+        libxext6 libxrender-dev \
+        csh tcsh \
+        wget curl git unzip ca-certificates 
+
+ENV LANG="en_US.UTF-8" \
+    LC_ALL="en_US.UTF-8"
+RUN echo "LC_ALL=en_US.UTF-8" >> /etc/environment
+RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+RUN echo "LANG=en_US.UTF-8" > /etc/locale.conf
+# locale-gen en_US.UTF-8
+
+# Install Boost
+RUN wget http://sourceforge.net/projects/boost/files/boost/1.41.0/boost_1_41_0.tar.gz
+RUN tar -zxvpf boost_1_41_0.tar.gz
+
+# Install Anaconda (older version on purpose)
+RUN wget https://repo.continuum.io/archive/Anaconda3-2018.12-Linux-x86_64.sh
+RUN chmod +x Anaconda3-2018.12-Linux-x86_64.sh
+RUN ./Anaconda3-2018.12-Linux-x86_64.sh 
+
+# Download and unzip FreeSurfer
+RUN wget https://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/7.2.0/freesurfer-linux-ubuntu18_amd64-7.2.0.tar.gz 
+RUN tar -zxvpf freesurfer-linux-*..tar.gz
+
+ENV FREESURFER_HOME=/root/freesurfer
+ENV SUBJECTS_DIR=$FREESURFER_HOME/subjects
+ENV DYLD_FALLBACK_LIBRARY_PATH=/usr/lib:$DYLD_LIBRARY_PATH
+# RUN echo "source $FREESURFER_HOME/SetUpFreeSurfer.sh" >> /root/.bashrc
+# RUN source $FREESURFER_HOME/SetUpFreeSurfer.sh
+
+# Download img_pipe and create conda env
+RUN git clone https://github.com/changlabucsf/img_pipe
+RUN conda env create -f img_pipe/environment_py27.yml
+
+# Install python dependencies
+RUN pip install --upgrade pip
+RUN pip install --upgrade matplotlib
+RUN pip uninstall numpy
+RUN pip install intel-numpy
+
+
+RUN wget http://mirrors.kernel.org/ubuntu/pool/main/libf/libffi/libffi6_3.2.1-8_amd64.deb
+# RUN dpkg -i libffi6_3.2.1-8_amd64.deb
+RUN apt-get install -y ./libffi6_3.2.1-8_amd64.deb
+RUN apt-get update
